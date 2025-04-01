@@ -13,9 +13,9 @@ You can find `README.md` files and comments that document my understanding of th
 
 ## Usage
 
-You will need to specify your verus binary location.
+You will need to specify your verus directory location.
 ```bash
-VERUS_DIR=<path to your verus build>
+VERUS_DIR=<path to your verus directory>
 ```
 
 Then,

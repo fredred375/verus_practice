@@ -21,4 +21,5 @@ cd ..
   --compile \
   --verify-module mystruct::exec::check \
   --verify-module mystruct::trusted::exec_types \
-  --verify-module mystruct::trusted::spec_types
+  --verify-module mystruct::trusted::spec_types \
+  main.rs
