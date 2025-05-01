@@ -15,25 +15,29 @@ verus!{
  *      }
  */
 pub fn check_mystruct(mystruct: &exec_types::MyStruct) -> (res: bool)
-    // requires
-    //     mystruct@.field.is_Some() ==> mystruct@.field.get_Some_0().len() < 100,
     ensures
         mystruct@.well_formed() == res
 {
-    let mut result: bool = true;
     if let Some(f) = mystruct.field() {
+        let mut result: bool = true;
         let mut idx: usize = 0;
-        let fb = exec_types::map_vec(f);
-        while idx < fb.len()
+        while idx < f.len()
             invariant
-                idx <= fb.len(),
-                result == forall |i: int| 0 <= i < idx ==> spec_types::state_validation(fb[i]),
+                idx <= f.len(),
+                result == forall |i: int| 0 <= i < idx ==> spec_types::state_validation(f[i]@),
         {
-            result = result && exec_types::state_validation(fb[idx]);
+            result = result && exec_types::state_validation(&f[idx]);
             idx += 1;
         }
+        assert(result == (forall |i: int| 0 <= i < f.len() ==> spec_types::state_validation(f[i]@)));
+        assert(forall |i: int| 0 <= i < mystruct@.field.get_Some_0().len() ==> (mystruct@.field.get_Some_0()[i] == f[i]@));
+        assert(mystruct@.field.get_Some_0().len() == f.len());
+        assert(forall |i: int| 0 <= i < f.len() ==> (mystruct@.field.get_Some_0()[i] == f[i]@));
+        // assert(result == (forall |i: int| 0 <= i < f.len() ==> spec_types::state_validation(mystruct@.field.get_Some_0()[i])));
+        result
+    } else {
+        true
     }
-    result
 }
 
 }

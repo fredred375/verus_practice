@@ -36,11 +36,11 @@ impl MyStruct {
     pub fn field(&self) -> (field: Option<Vec<MyNum>>)
         ensures
             field.is_Some() == self@.field.is_Some(),
-            field.is_Some() ==> self@.field.get_Some_0() == field.get_Some_0()@.map(|i: int, x: MyNum| x@),
+            field.is_Some() ==> field.get_Some_0()@.map_values(|n: MyNum| n@) == self@.field.get_Some_0()
     {
         match &self.inner.field {
             Some(f) => {
-                Some(f.iter().map(|x| MyNum::from_hack(x.clone())).collect())
+                Some(f.into_iter().map(|x| MyNum::from_hack(x.clone())).collect())
             }
             None => None,
         }
@@ -53,8 +53,8 @@ pub struct MyNum {
 }
 
 impl View for MyNum {
-    type V = i32;
-    open spec fn view(&self) -> i32;
+    type V = spec_types::MyNumView;
+    open spec fn view(&self) -> spec_types::MyNumView;
 }
 
 #[verifier(external)]
@@ -74,7 +74,7 @@ impl MyNum {
     #[verifier(external_body)]
     pub fn num(&self) -> (num: i32)
         ensures
-            self@ == num,
+            self@.num == num,
     {
         self.inner.num
     }
@@ -87,21 +87,21 @@ impl MyNum {
 //     mybool.b()
 // }
 
-pub fn state_validation(mynum: i32) -> (res: bool)
+pub fn state_validation(mynum: &MyNum) -> (res: bool)
     ensures
-        spec_types::state_validation(mynum) == res,
+        spec_types::state_validation(mynum@) == res,
 {
-    mynum != 0
+    mynum.num() != 0
 }
 
-#[verifier(external_body)]
-pub fn map_vec(
-    vec: Vec<MyNum>,
-) -> (res: Vec<i32>)
-    ensures
-        res@ == vec@.map(|i: int, b: MyNum| b@),
-{
-    vec.iter().map(|x| x.num()).collect()
-}
+// #[verifier(external_body)]
+// pub fn map_vec(
+//     vec: Vec<MyNum>,
+// ) -> (res: Vec<MyNumView>)
+//     ensures
+//         res@ == vec@.map(|i: int, b: MyNum| b@),
+// {
+//     vec.iter().map(|x| x@).collect()
+// }
 
 }
