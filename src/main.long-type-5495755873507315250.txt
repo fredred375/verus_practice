@@ -1,0 +1,1 @@
+builtin::FnSpec<(mystruct::trusted::exec_types::MyBool,), mystruct::trusted::spec_types::MyBoolView>

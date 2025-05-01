@@ -22,4 +22,5 @@ cd ..
   --verify-module mystruct::exec::check \
   --verify-module mystruct::trusted::exec_types \
   --verify-module mystruct::trusted::spec_types \
+  --expand-errors \
   main.rs

@@ -33,15 +33,75 @@ impl MyStruct {
     // get function for exec_type::MyStruct
     // the postconditions are the starting point for reasoning on this type
     #[verifier(external_body)]
-    pub fn field(&self) -> (field: Option<bool>)
+    pub fn field(&self) -> (field: Option<Vec<MyBool>>)
         ensures
-            match field@ {
-                Some(x) => self@.field == Some(x),
-                None => self@.field == None::<bool>,
-            }
+            field.is_Some() == self@.field.is_Some(),
+            field.is_Some() ==> self@.field.get_Some_0() == field.get_Some_0()@.map(|i: int, x: MyBool| x@),
     {
-        self.inner.field.clone()
+        match &self.inner.field {
+            Some(f) => {
+                Some(f.iter().map(|x| MyBool::from_hack(x.clone())).collect())
+            }
+            None => None,
+        }
     }
+}
+
+#[verifier(external_body)]
+pub struct MyBool {
+    inner: deps_hack::MyBool
+}
+
+impl View for MyBool {
+    type V = bool;
+    open spec fn view(&self) -> bool;
+}
+
+#[verifier(external)]
+impl MyBool {
+    pub fn from_hack(inner: deps_hack::MyBool) -> MyBool {
+        MyBool { inner }
+    }
+    //not used in this example, but can be useful for other cases
+    pub fn into_hack(self) -> deps_hack::MyBool {
+        self.inner
+    }
+}
+
+impl MyBool {
+    // get function for exec_type::MyBool
+    // the postconditions are the starting point for reasoning on this type
+    #[verifier(external_body)]
+    pub fn b(&self) -> (b: bool)
+        ensures
+            self@ == b,
+    {
+        self.inner.b != 0
+    }
+}
+
+// pub fn state_validation(mybool: &MyBool) -> (res: bool)
+//     ensures
+//         spec_types::state_validation(mybool@) == res,
+// {
+//     mybool.b()
+// }
+
+pub fn state_validation(mybool: bool) -> (res: bool)
+    ensures
+        spec_types::state_validation(mybool) == res,
+{
+    mybool
+}
+
+#[verifier(external_body)]
+pub fn map_vec(
+    vec: Vec<MyBool>,
+) -> (res: Vec<bool>)
+    ensures
+        res@ == vec@.map(|i: int, b: MyBool| b@),
+{
+    vec.iter().map(|x| x.b()).collect()
 }
 
 }
