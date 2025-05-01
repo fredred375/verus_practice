@@ -1,3 +1,5 @@
+use std::vec;
+
 use deps_hack::MyStruct;
 use deps_hack::serde_json;
 #[path = "mystruct/mod.rs"]
@@ -7,7 +9,7 @@ use crate::mystruct::trusted::exec_types::MyStruct as TrustedMyStruct;
 
 fn main() {
     let json = serde_json::json!({
-        "field": true
+        "field": vec![serde_json::json!({"num": 1}), serde_json::json!({"num": 0})]
     });
     let mystruct = serde_json::from_value::<MyStruct>(json).unwrap();
     println!("{:?}", mystruct);

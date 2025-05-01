@@ -78,30 +78,13 @@ impl MyNum {
     {
         self.inner.num
     }
-}
 
-// pub fn state_validation(mybool: &MyNum) -> (res: bool)
-//     ensures
-//         spec_types::state_validation(mybool@) == res,
-// {
-//     mybool.b()
-// }
-
-pub fn state_validation(mynum: &MyNum) -> (res: bool)
+    pub fn state_validation(&self) -> (res: bool)
     ensures
-        spec_types::state_validation(mynum@) == res,
-{
-    mynum.num() != 0
+        self@.state_validation() == res,
+    {
+        self.num() != 0
+    }
 }
-
-// #[verifier(external_body)]
-// pub fn map_vec(
-//     vec: Vec<MyNum>,
-// ) -> (res: Vec<MyNumView>)
-//     ensures
-//         res@ == vec@.map(|i: int, b: MyNum| b@),
-// {
-//     vec.iter().map(|x| x@).collect()
-// }
 
 }
