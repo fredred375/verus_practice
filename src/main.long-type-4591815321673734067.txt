@@ -1,1 +1,0 @@
-std::iter::Map<std::slice::Iter<'_, mystruct::trusted::exec_types::MyNum>, builtin::FnSpec<(mystruct::trusted::exec_types::MyNum,), mystruct::trusted::spec_types::MyNumView>>
