@@ -33,14 +33,14 @@ impl MyStruct {
     // get function for exec_type::MyStruct
     // the postconditions are the starting point for reasoning on this type
     #[verifier(external_body)]
-    pub fn field(&self) -> (field: Option<Vec<MyBool>>)
+    pub fn field(&self) -> (field: Option<Vec<MyNum>>)
         ensures
             field.is_Some() == self@.field.is_Some(),
-            field.is_Some() ==> self@.field.get_Some_0() == field.get_Some_0()@.map(|i: int, x: MyBool| x@),
+            field.is_Some() ==> self@.field.get_Some_0() == field.get_Some_0()@.map(|i: int, x: MyNum| x@),
     {
         match &self.inner.field {
             Some(f) => {
-                Some(f.iter().map(|x| MyBool::from_hack(x.clone())).collect())
+                Some(f.iter().map(|x| MyNum::from_hack(x.clone())).collect())
             }
             None => None,
         }
@@ -48,60 +48,60 @@ impl MyStruct {
 }
 
 #[verifier(external_body)]
-pub struct MyBool {
-    inner: deps_hack::MyBool
+pub struct MyNum {
+    inner: deps_hack::MyNum
 }
 
-impl View for MyBool {
-    type V = bool;
-    open spec fn view(&self) -> bool;
+impl View for MyNum {
+    type V = i32;
+    open spec fn view(&self) -> i32;
 }
 
 #[verifier(external)]
-impl MyBool {
-    pub fn from_hack(inner: deps_hack::MyBool) -> MyBool {
-        MyBool { inner }
+impl MyNum {
+    pub fn from_hack(inner: deps_hack::MyNum) -> MyNum {
+        MyNum { inner }
     }
     //not used in this example, but can be useful for other cases
-    pub fn into_hack(self) -> deps_hack::MyBool {
+    pub fn into_hack(self) -> deps_hack::MyNum {
         self.inner
     }
 }
 
-impl MyBool {
-    // get function for exec_type::MyBool
+impl MyNum {
+    // get function for exec_type::MyNum
     // the postconditions are the starting point for reasoning on this type
     #[verifier(external_body)]
-    pub fn b(&self) -> (b: bool)
+    pub fn num(&self) -> (num: i32)
         ensures
-            self@ == b,
+            self@ == num,
     {
-        self.inner.b != 0
+        self.inner.num
     }
 }
 
-// pub fn state_validation(mybool: &MyBool) -> (res: bool)
+// pub fn state_validation(mybool: &MyNum) -> (res: bool)
 //     ensures
 //         spec_types::state_validation(mybool@) == res,
 // {
 //     mybool.b()
 // }
 
-pub fn state_validation(mybool: bool) -> (res: bool)
+pub fn state_validation(mynum: i32) -> (res: bool)
     ensures
-        spec_types::state_validation(mybool) == res,
+        spec_types::state_validation(mynum) == res,
 {
-    mybool
+    mynum != 0
 }
 
 #[verifier(external_body)]
 pub fn map_vec(
-    vec: Vec<MyBool>,
-) -> (res: Vec<bool>)
+    vec: Vec<MyNum>,
+) -> (res: Vec<i32>)
     ensures
-        res@ == vec@.map(|i: int, b: MyBool| b@),
+        res@ == vec@.map(|i: int, b: MyNum| b@),
 {
-    vec.iter().map(|x| x.b()).collect()
+    vec.iter().map(|x| x.num()).collect()
 }
 
 }

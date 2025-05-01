@@ -3,10 +3,10 @@ pub use serde_json;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub struct MyStruct {
-    pub field: Option<Vec<MyBool>>
+    pub field: Option<Vec<MyNum>>
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-pub struct MyBool {
-    pub b: i32
+pub struct MyNum {
+    pub num: i32
 }
